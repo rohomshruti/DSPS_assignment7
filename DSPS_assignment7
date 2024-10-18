@@ -1,0 +1,102 @@
+#include <iostream>
+using namespace std;
+
+#define Max 10
+int queue[Max];
+int front = -1;
+int rear = -1;
+
+class Pizza {
+public:
+    string type, size, topping; // Changed char to string to accommodate text input
+    int quantity;
+    
+    void accept();
+    int bill(); // Change to return int for bill calculation
+    void display(int orderIndex); // Pass index to display order details
+};
+
+Pizza P[Max]; // Changed size to Max to match the queue
+
+void Pizza::accept() {
+    cout << "Enter the type of pizza you want: ";
+    cin >> type;
+    cout << "Enter the size of pizza [Small, Medium, Large]: ";
+    cin >> size;
+    cout << "Enter the topping of pizza: ";
+    cin >> topping;
+    cout << "Enter the quantity of pizza: ";
+    cin >> quantity;
+}
+
+int Pizza::bill() {
+    if (size == "Small") {
+        return quantity * 200;
+    } else if (size == "Medium") {
+        return quantity * 300;
+    } else {
+        return quantity * 400;
+    }
+}
+
+void Pizza::display(int orderIndex) {
+    cout << "Order " << orderIndex + 1 << " - Type: " << type 
+         << ", Topping: " << topping << ", Size: " << size 
+         << ", Quantity: " << quantity << ", Price: " << bill() << endl;
+}
+
+int main() {
+    int ch, n;
+
+    cout << "Enter total number of orders you want to place [max 10]: ";
+    cin >> n;
+    n = (n > Max) ? Max : n; // Ensure n doesn't exceed Max
+
+    do {
+        cout << "\nEnter your choice:";
+        cout << "\n1. Order pizza";
+        cout << "\n2. Delete order which has been served";
+        cout << "\n3. Display orders";
+        cout << "\n4. Exit";
+        cin >> ch;
+
+        switch (ch) {
+            case 1:
+                if (rear == Max - 1) {
+                    cout << "\nSorry, we can't take orders now...";
+                } else {
+                    rear++;
+                    P[rear].accept(); // Accept pizza details
+                    queue[rear] = rear; // Store the index in the queue
+                    if (front == -1) {
+                        front = 0;
+                    }
+                }
+                break;
+            case 2:
+                if (front == -1) {
+                    cout << "\nNo order placed.";
+                } else {
+                    cout << "Order " << queue[front] + 1 << " served successfully!" << endl;
+                    front++;
+                    if (front > rear) {
+                        front = rear = -1; // Reset if all orders are served
+                    }
+                }
+                break;
+            case 3:
+                for (int i = front; i <= rear; i++) {
+                    P[queue[i]].display(i); // Display orders
+                }
+                break;
+            case 4:
+                cout << "\nExiting....!";
+                break;
+            default:
+                cout << "\nInvalid choice! Please try again.";
+                break;
+        }
+    } while (ch != 4);
+
+    return 0;
+}
